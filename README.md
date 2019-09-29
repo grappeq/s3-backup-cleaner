@@ -7,6 +7,7 @@ Keeps first backup for each day.
 I'm running this on AWS Lambda once a month. Following env vars need to be specified:
 * **S3_BUCKET_NAME** (e.g. *some-bucket*)
 * **FILE_PATH_PREFIX**: prefix for which the files are listed (e.g. *backups/db_* if files are in *backups* dir and named *db_\<date\>*)
+
 Also, the function must have access to the bucket setup along with proper permissions.
 
 ### Locally
