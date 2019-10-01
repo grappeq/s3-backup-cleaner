@@ -4,7 +4,7 @@ const chunk = require('lodash.chunk');
 const listObjectsToKeepAndDelete = require("./listObjectsToKeepAndDelete");
 const deleteFiles = require("./deleteFiles");
 
-const GRACE_PERION_IN_DAYS = 30;
+const DEFAULT_GRACE_PERIOD_IN_DAYS = 30;
 const NUMBER_OF_DAYS_TO_CLEAN = 60;
 const DELETE_CHUNK_SIZE = 1000;
 
@@ -16,13 +16,16 @@ const prepareDatesToBeCleaned = (startDate) => Array.from(
 exports.handler = async (event, context) => {
     const bucketName = process.env.S3_BUCKET_NAME;
     const pathPrefix = process.env.FILE_PATH_PREFIX;
+    const gracePeriod = process.env.GRACE_PERIOD_IN_DAYS || DEFAULT_GRACE_PERIOD_IN_DAYS;
 
     console.log("Running script")
+    console.log("=== Configuration ===");
     console.log(`Bucket: ${bucketName}`);
     console.log(`File path prefix: ${pathPrefix}`);
+    console.log(`Clean older than: ${gracePeriod} days`);
 
     const firstDayToBeCleaned = moment()
-        .subtract(GRACE_PERION_IN_DAYS + NUMBER_OF_DAYS_TO_CLEAN, "day");
+        .subtract(gracePeriod + NUMBER_OF_DAYS_TO_CLEAN, "day");
 
     const datesToBeCleaned = prepareDatesToBeCleaned(firstDayToBeCleaned);
     const { filesToKeep, filesToDelete } = await listObjectsToKeepAndDelete({
@@ -31,10 +34,10 @@ exports.handler = async (event, context) => {
         dates: datesToBeCleaned
     })
 
-    console.log("=== Files to keep ===");
-    console.log(filesToKeep);
-    console.log("=== Files that will be deleted ===");
-    console.log(filesToDelete);
+    console.log(`=== Files to keep (${filesToKeep.length}) ===`);
+    filesToKeep.forEach(file => { console.log(file); });
+    console.log(`=== Files that will be deleted (${filesToDelete.length}) ===`);
+    filesToDelete.forEach(file => { console.log(file); });
 
     chunk(filesToDelete, DELETE_CHUNK_SIZE)
         .forEach((fileKeys) => {
