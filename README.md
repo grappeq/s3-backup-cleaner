@@ -4,7 +4,9 @@ Keeps first backup for each day.
 
 ## Running
 ### Production
-I'm running this on AWS Lambda once a month. Following env vars need to be specified:
+I deployed it using Serverless framework to AWS Lambda where it's running from time to time - but you can do it whatever way you'd like.
+
+Following env vars need to be specified:
 * **S3_BUCKET_NAME** (e.g. *some-bucket*)
 * **FILE_PATH_PREFIX**: prefix for which the files are listed (e.g. *backups/db_* if files are in *backups* dir and named *db_\<date\>*)
 

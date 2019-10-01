@@ -4,12 +4,13 @@ const chunk = require('lodash.chunk');
 const listObjectsToKeepAndDelete = require("./listObjectsToKeepAndDelete");
 const deleteFiles = require("./deleteFiles");
 
-const GRACE_PERION_IN_MONTHS = 2;
+const GRACE_PERION_IN_DAYS = 30;
+const NUMBER_OF_DAYS_TO_CLEAN = 60;
 const DELETE_CHUNK_SIZE = 1000;
 
-const datesInMonth = (monthDate) => Array.from(
-    { length: monthDate.daysInMonth() },
-    (x, i) => monthDate.clone().startOf('month').add(i, 'days')
+const prepareDatesToBeCleaned = (startDate) => Array.from(
+    { length: NUMBER_OF_DAYS_TO_CLEAN },
+    (x, i) => startDate.clone().add(i, 'days')
 );
 
 exports.handler = async (event, context) => {
@@ -20,11 +21,10 @@ exports.handler = async (event, context) => {
     console.log(`Bucket: ${bucketName}`);
     console.log(`File path prefix: ${pathPrefix}`);
 
-    const startOfMonthToBeCleaned = moment()
-        .subtract(GRACE_PERION_IN_MONTHS, "month")
-        .startOf('month');
+    const firstDayToBeCleaned = moment()
+        .subtract(GRACE_PERION_IN_DAYS + NUMBER_OF_DAYS_TO_CLEAN, "day");
 
-    const datesToBeCleaned = datesInMonth(startOfMonthToBeCleaned);
+    const datesToBeCleaned = prepareDatesToBeCleaned(firstDayToBeCleaned);
     const { filesToKeep, filesToDelete } = await listObjectsToKeepAndDelete({
         pathPrefix,
         bucketName,
@@ -40,4 +40,5 @@ exports.handler = async (event, context) => {
         .forEach((fileKeys) => {
             deleteFiles({ fileKeys, bucketName })
         });
+    console.log("Cleaning complete!");
 };

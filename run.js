@@ -1,3 +1,3 @@
-const { handler } =  require("./index");
+const { handler } =  require("./src/");
 
 handler().then(console.log);
