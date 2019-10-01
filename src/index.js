@@ -16,7 +16,7 @@ const prepareDatesToBeCleaned = (startDate) => Array.from(
 exports.handler = async (event, context) => {
     const bucketName = process.env.S3_BUCKET_NAME;
     const pathPrefix = process.env.FILE_PATH_PREFIX;
-    const gracePeriod = process.env.GRACE_PERIOD_IN_DAYS || DEFAULT_GRACE_PERIOD_IN_DAYS;
+    const gracePeriod = parseInt(process.env.GRACE_PERIOD_IN_DAYS) || DEFAULT_GRACE_PERIOD_IN_DAYS;
 
     console.log("Running script")
     console.log("=== Configuration ===");
