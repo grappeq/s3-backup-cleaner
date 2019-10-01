@@ -1,0 +1,31 @@
+service: s3-backup-cleaner
+
+provider:
+  name: aws
+  stage: production
+  runtime: nodejs10.x
+  region: eu-central-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:DeleteObject"
+      Resource:
+        - "arn:aws:s3:::some-bucket/*"
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource:
+        - "arn:aws:s3:::some-bucket"
+
+functions:
+  some-bucket:
+    description: Removes some old excessive db backups from S3 some-bucket
+    handler: src/index.handler
+    events:
+      - schedule: rate(1 day)
+    environment:
+      FILE_PATH_PREFIX: "db/db_backup_"
+      S3_BUCKET_NAME: some-bucket
+    timeout: 150
+    memorySize: 512
+

@@ -4,7 +4,7 @@ Keeps first backup for each day.
 
 ## Running
 ### Production
-I deployed it using Serverless framework to AWS Lambda where it's running from time to time - but you can do it whatever way you'd like.
+I deployed it using Serverless framework to AWS Lambda where it's running once a day (see [`serverless.example.yml`](serverless.example.yml) file) - but you can do it whatever way you'd like.
 
 Following env vars need to be specified:
 * **S3_BUCKET_NAME** (e.g. *some-bucket*)
