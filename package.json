@@ -12,6 +12,6 @@
   "dependencies": {
     "aws-sdk": "^2.538.0",
     "lodash.chunk": "^4.2.0",
-    "moment": "^2.24.0"
+    "moment": "^2.29.4"
   }
 }
